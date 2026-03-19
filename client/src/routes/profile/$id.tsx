@@ -11,7 +11,7 @@ const PAGE_LIMIT = 20;
 function ProfilePage() {
     const { id } = useParams({ from: "/profile/$id" });
     const navigate = useNavigate();
-    const { isAuthenticated, user } = useAuth();
+    const { isAuthenticated, user, updateUserInformation } = useAuth();
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [activeBets, setActiveBets] = useState<BetDetails[]>([]);
@@ -31,6 +31,7 @@ function ProfilePage() {
             setIsLoading(true);
             setError(null);
             const dataActiveBets = await api.getUserBets(userId, "active", PAGE_LIMIT, pageActiveBets);
+            console.log(dataActiveBets.bets);
             setActiveBets(dataActiveBets.bets);
             setTotalActiveBets(dataActiveBets.totalBets);
         } catch (err) {
@@ -63,6 +64,8 @@ function ProfilePage() {
             if ((type === "market_resolved" || type === "market_archived")) {
                 loadActiveBets();
                 loadResolvedBets();
+                const updatedUser = await api.getUserInformation(user.id);
+                updateUserInformation(updatedUser);
             }
 
             if (type === "bet_placed") {
@@ -230,29 +233,31 @@ function ProfilePage() {
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className="mt-6 pb-8 flex items-center justify-center gap-2">
-                                            <div className="w-24 flex justify-end">
-                                                <Button
-                                                    className="w-16"
-                                                    onClick={() => setPageActiveBets(pageActiveBets - 1)}
-                                                    disabled={(pageActiveBets <= 1)}
-                                                    variant="outline"
-                                                >Previous</Button>
+                                        {activeBets.length > 0 && (
+                                            <div className="mt-6 pb-8 flex items-center justify-center gap-2">
+                                                <div className="w-24 flex justify-end">
+                                                    <Button
+                                                        className="w-16"
+                                                        onClick={() => setPageActiveBets(pageActiveBets - 1)}
+                                                        disabled={(pageActiveBets <= 1)}
+                                                        variant="outline"
+                                                    >Previous</Button>
+                                                </div>
+                                                <p
+                                                    className="w-16 text-center"
+                                                >
+                                                    {pageActiveBets} / {Math.ceil(totalActiveBets / PAGE_LIMIT)}
+                                                </p>
+                                                <div className="w-24 flex justify-start">
+                                                    <Button
+                                                        className="w-16"
+                                                        onClick={() => setPageActiveBets(pageActiveBets + 1)}
+                                                        disabled={(totalActiveBets <= (pageActiveBets * PAGE_LIMIT))}
+                                                        variant="outline"
+                                                    >Next</Button>
+                                                </div>
                                             </div>
-                                            <p
-                                                className="w-16 text-center"
-                                            >
-                                                {pageActiveBets} / {Math.ceil(totalActiveBets / PAGE_LIMIT)}
-                                            </p>
-                                            <div className="w-24 flex justify-start">
-                                                <Button
-                                                    className="w-16"
-                                                    onClick={() => setPageActiveBets(pageActiveBets + 1)}
-                                                    disabled={(totalActiveBets <= (pageActiveBets * PAGE_LIMIT))}
-                                                    variant="outline"
-                                                >Next</Button>
-                                            </div>
-                                        </div>
+                                        )}
                                     </CardContent>
                                 </Card>
                             </div>
@@ -275,29 +280,31 @@ function ProfilePage() {
                                                 </div>
                                             ))}
                                         </div>
-                                        <div className="mt-6 pb-8 flex items-center justify-center gap-2">
-                                            <div className="w-24 flex justify-end">
-                                                <Button
-                                                    className="w-16"
-                                                    onClick={() => setPageResolvedBets(pageResolvedBets - 1)}
-                                                    disabled={(pageResolvedBets <= 1)}
-                                                    variant="outline"
-                                                >Previous</Button>
+                                        {resolvedBets.length > 0 && (
+                                            <div className="mt-6 pb-8 flex items-center justify-center gap-2">
+                                                <div className="w-24 flex justify-end">
+                                                    <Button
+                                                        className="w-16"
+                                                        onClick={() => setPageResolvedBets(pageResolvedBets - 1)}
+                                                        disabled={(pageResolvedBets <= 1)}
+                                                        variant="outline"
+                                                    >Previous</Button>
+                                                </div>
+                                                <p
+                                                    className="w-16 text-center"
+                                                >
+                                                    {pageResolvedBets} / {Math.ceil(totalResolvedBets / PAGE_LIMIT)}
+                                                </p>
+                                                <div className="w-24 flex justify-start">
+                                                    <Button
+                                                        className="w-16"
+                                                        onClick={() => setPageResolvedBets(pageResolvedBets + 1)}
+                                                        disabled={(totalResolvedBets <= (pageResolvedBets * PAGE_LIMIT))}
+                                                        variant="outline"
+                                                    >Next</Button>
+                                                </div>
                                             </div>
-                                            <p
-                                                className="w-16 text-center"
-                                            >
-                                                {pageResolvedBets} / {Math.ceil(totalResolvedBets / PAGE_LIMIT)}
-                                            </p>
-                                            <div className="w-24 flex justify-start">
-                                                <Button
-                                                    className="w-16"
-                                                    onClick={() => setPageResolvedBets(pageResolvedBets + 1)}
-                                                    disabled={(totalResolvedBets <= (pageResolvedBets * PAGE_LIMIT))}
-                                                    variant="outline"
-                                                >Next</Button>
-                                            </div>
-                                        </div>
+                                        )}
                                     </CardContent>
                                 </Card>
                             </div>

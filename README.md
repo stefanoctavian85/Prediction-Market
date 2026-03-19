@@ -43,36 +43,18 @@ ADMIN_PASSWORD=<YOUR_ADMIN_PASSWORD>
 ADMIN_EMAIL=<YOUR_ADMIN_EMAIL>
 ```
 
-Then start the entire stack with Docker Compose:
+**Running with Docker**
 
 ```bash
 docker-compose up -d
 ```
 
----
-
-## Database
-
-**Run migrations**
+**Running manually**
 
 ```bash
-bun run db:migrate
+cd server/ && bun install && bun run dev
+cd client/ && bun install && bun run dev
 ```
-
-**Seed the database**
-
-```bash
-# Seed with generated fake data
-bun run db:seed
-
-# Delete all data and reseed
-bun run db:reset
-
-# Delete all data
-bun run db:delete
-```
-
-The seed script generates 100 users, 100 markets, and a proportional number of bets. An admin account is created from the environment variables defined above.
 
 ---
 
