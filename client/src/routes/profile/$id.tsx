@@ -31,7 +31,6 @@ function ProfilePage() {
             setIsLoading(true);
             setError(null);
             const dataActiveBets = await api.getUserBets(userId, "active", PAGE_LIMIT, pageActiveBets);
-            console.log(dataActiveBets.bets);
             setActiveBets(dataActiveBets.bets);
             setTotalActiveBets(dataActiveBets.totalBets);
         } catch (err) {
